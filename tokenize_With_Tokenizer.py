@@ -5,18 +5,24 @@ from tokenizers.decoders import BPEDecoder
 from tokenizers.trainers import BpeTrainer
 from typing import List
 import regex as re
-files = [f"input.txt"]
+
+
+files = [f"input.txt"] # Articles from lurk
+
 special_tokens=["<|endoftext|>"]
+
+
 class RusTokPreTokenizer:
     def rus_split(self, i: int, normalized_string: NormalizedString) -> List[NormalizedString]:
         splits = []
         pattern = r""" ?(?i:кое|кой)-|-(?:либо|нибудь|то|таки)| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+"""
-        text_chunkes = re.finditer(pattern, str(normalized_string))
+        text_chunkes = re.finditer(pattern, str(normalized_string)) # -> MatchObject
         chunks_index = [(chunk.start(), chunk.end()) for chunk in text_chunkes]
         for ch in chunks_index:
             splits.append(normalized_string[ch[0]:ch[1]])
         return splits
     def pre_tokenize(self, pretok: PreTokenizedString):
+        # Here we need to call 'pretok.split' with splitting methos as parameters
         pretok.split(self.rus_split)
 
 
